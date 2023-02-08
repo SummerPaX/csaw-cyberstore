@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { AxiosError } from "axios";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../stores/auth.store";
@@ -8,12 +9,15 @@ const router = useRouter();
 
 const error = ref("");
 
+// if the Profile has not been loaded start the getProfile action in the auth store
 if (authStore.profile === undefined) {
-	authStore.getProfile().catch((e: any) => {
-		error.value = e.response?.data?.message;
+	authStore.getProfile().catch((e: AxiosError<{ message: string }>) => {
+		// catch errors and set the Error Object to the Error Message or a generic Message
+		error.value = e.response?.data?.message || "Failed to get Profile";
 	});
 }
 
+// start logOut action of the auth store and redirect to the Login Page
 function logOut() {
 	authStore.logOut();
 	router.push({ name: "Login" });
@@ -22,10 +26,11 @@ function logOut() {
 
 <template>
 	<main class="w-fit flex flex-col">
+		<!-- if-else-if Block to implement Loading and Error States -->
 		<div v-if="error" class="text-red-400 text-3xl">Error: {{ error }}</div>
 		<div v-else-if="authStore.profile === undefined" class="animate-pulse">Loading...</div>
 		<div v-else class="flex flex-col gap-6 items-center">
-			<h1>User Profile</h1>
+			<h1>Welcome, {{ authStore.profile.firstName }}!</h1>
 			<div class="grid grid-cols-2 rounded-xl py-8 px-16 text-xl bg-stone-100">
 				<label>ID:</label>
 				<span> {{ authStore.profile.id }}</span>

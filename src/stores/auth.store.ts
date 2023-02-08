@@ -1,13 +1,15 @@
+import { useLocalStorage } from "@vueuse/core";
 import axios from "axios";
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { ProfileType } from "../interfaces";
 
 export const useAuthStore = defineStore("auth", {
 	state: () => ({
-		token: "",
+		token: useLocalStorage("access_token", ""),
 		profile: undefined as ProfileType | undefined,
 	}),
 	getters: {
+		// computed Property to check if we are logged in
 		isLoggedIn: (store) => {
 			return store.token ? true : false;
 		},
@@ -19,18 +21,22 @@ export const useAuthStore = defineStore("auth", {
 				{ username, password }
 			);
 
+			// If no access_token was returned return success false
 			if (!response?.data?.access_token) return { success: false };
 
+			// set the token variable in the store
 			this.token = response.data.access_token;
 
-			// Sets Auth Object for Axios
+			// Sets Global Auth header for Axios
 			axios.defaults.headers.common.Authorization = `Bearer ${this.token}`;
 
 			return { success: true };
 		},
 		async logOut() {
+			// send the logout request to the server
 			const response = await axios.get("http://localhost:3000/auth/logout");
 
+			// reset all data, including the axios default header
 			this.token = "";
 			this.profile = undefined;
 			axios.defaults.headers.common.Authorization = undefined;

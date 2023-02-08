@@ -1,11 +1,9 @@
-import {
-	createRouter,
-	createWebHistory,
-	RouteLocationNormalized,
-	RouteRecordRaw,
-} from "vue-router";
+import axios from "axios";
+import { createRouter, createWebHistory, RouteLocationNormalized } from "vue-router";
 import { useAuthStore } from "../stores/auth.store";
 
+// Per-Route Guard to check if user is allowed to access the page,
+// and if not, he will be redirected to the Login Page.
 const authGuard = (to: RouteLocationNormalized) => {
 	const store = useAuthStore();
 
@@ -21,16 +19,20 @@ const routes = [
 		component: import("../pages/Profile.vue"),
 		beforeEnter: authGuard,
 	},
-	{
-		name: "Products",
-		path: "/products",
-		component: import("../pages/Products.vue"),
-		beforeEnter: authGuard,
-	},
 ];
 
-export default createRouter({
+const router = createRouter({
 	history: createWebHistory(),
-
 	routes,
 });
+
+// Global navigation Guard to set the Axios Header if user is logged in and the header has not been set yet
+router.beforeEach(() => {
+	const store = useAuthStore();
+
+	if (store.isLoggedIn && !axios.defaults.headers.common.Authorization) {
+		axios.defaults.headers.common.Authorization = `Bearer ${store.token}`;
+	}
+});
+
+export default router;

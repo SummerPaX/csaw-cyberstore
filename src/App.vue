@@ -24,9 +24,8 @@ function logOut() {
 <template>
 	<div class="bg-stone-900 flex w-full justify-center items-center gap-4 p-2 text-white">
 		<div class="flex grow max-w-[1200px] gap-4 p-2">
-			<!-- <RouterLink class="" v-for="route in routes" :to="route">{{ route.name }}</RouterLink> -->
 			<RouterLink to="/">Home</RouterLink>
-			<RouterLink to="/products">Products</RouterLink>
+			<RouterLink to="/profile">Profile</RouterLink>
 			<div class="ml-auto">
 				<a class="cursor-pointer" v-if="authStore.isLoggedIn" @click="logOut">Logout</a>
 				<RouterLink v-else to="/login">Login</RouterLink>

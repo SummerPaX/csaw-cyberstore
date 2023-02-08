@@ -10,17 +10,24 @@ const username = ref("");
 const password = ref("");
 const error = ref("");
 
-async function login() {
+function login() {
+	// reset Error on login attempt
 	error.value = "";
 
-	await authStore
+	// Because we use the Promise .then syntax,
+	// we do not have to await the asynchronous Function
+	authStore
 		.logIn(username.value, password.value)
 		.then(({ success }) => {
+			// if the login was successful navigate to Profile
 			if (success) {
 				router.push({ name: "Profile" });
+			} else {
+				error.value = "Login failed";
 			}
 		})
 		.catch((e) => {
+			// when an error was thrown in our request set the error message
 			error.value = e.response?.data?.message || "Login failed";
 		});
 }
@@ -39,5 +46,5 @@ async function login() {
 		</div>
 		<button type="submit" class="bg-green-600">Login</button>
 	</form>
-	<span v-if="error" class="text-red-500">{{ error }}</span>
+	<p v-if="error" class="text-red-500 text-center">{{ error }}</p>
 </template>
