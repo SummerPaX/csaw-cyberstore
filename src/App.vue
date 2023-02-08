@@ -1,37 +1,13 @@
 <script setup lang="ts">
 import { useFavicon, useTitle } from "@vueuse/core";
-import { computed } from "vue";
-import { useRouter } from "vue-router";
-import { useAuthStore } from "./stores/auth.store";
+import NavBar from "./components/NavBar.vue";
 
 useTitle("Pinia Store Login");
 useFavicon("/pinia.svg");
-
-const authStore = useAuthStore();
-
-const router = useRouter();
-
-const routes = computed(() => {
-	return router.getRoutes();
-});
-
-function logOut() {
-	authStore.logOut();
-	router.push({ name: "Login" });
-}
 </script>
 
 <template>
-	<div class="bg-stone-900 flex w-full justify-center items-center gap-4 p-2 text-white">
-		<div class="flex grow max-w-[1200px] gap-4 p-2">
-			<RouterLink to="/">Home</RouterLink>
-			<RouterLink to="/profile">Profile</RouterLink>
-			<div class="ml-auto">
-				<a class="cursor-pointer" v-if="authStore.isLoggedIn" @click="logOut">Logout</a>
-				<RouterLink v-else to="/login">Login</RouterLink>
-			</div>
-		</div>
-	</div>
+	<NavBar />
 	<div class="flex w-full justify-center p-4">
 		<div>
 			<RouterView></RouterView>
