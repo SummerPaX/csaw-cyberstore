@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { AxiosError } from "axios";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../stores/auth.store";
 
@@ -22,6 +22,20 @@ function logOut() {
 	authStore.logOut();
 	router.push({ name: "Login" });
 }
+
+const date = computed(() => {
+	const date = new Date(authStore.profile?.joinDate || "2000");
+
+	return date.toDateString();
+});
+
+const idStyle = computed(() => {
+	if (authStore.profile?.id === 10000) {
+		return "bg-red-500";
+	} else {
+		return "bg-green-500";
+	}
+});
 </script>
 
 <template>
@@ -32,7 +46,7 @@ function logOut() {
 		<div v-else class="flex flex-col gap-6 items-center">
 			<h1>Welcome, {{ authStore.profile.firstName }}!</h1>
 			<div class="grid grid-cols-2 rounded-xl py-8 px-16 text-xl bg-stone-100">
-				<label>ID:</label>
+				<label :class="idStyle">ID:</label>
 				<span> {{ authStore.profile.id }}</span>
 				<label>Username:</label>
 				<span> {{ authStore.profile.username }}</span>
@@ -47,7 +61,7 @@ function logOut() {
 				<label>Email:</label>
 				<span> {{ authStore.profile.email }}</span>
 				<label>Joined:</label>
-				<span> {{ authStore.profile.joinDate.substring(0, 10) }}</span>
+				<span> {{ date }}</span>
 			</div>
 			<button @click="logOut" class="w-56">Log Out</button>
 		</div>

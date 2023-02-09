@@ -10,8 +10,8 @@ export const useAuthStore = defineStore("auth", {
 	}),
 	getters: {
 		// computed Property to check if we are logged in
-		isLoggedIn: (store) => {
-			return store.token ? true : false;
+		isLoggedIn: (state) => {
+			return state.token ? true : false;
 		},
 	},
 	actions: {
